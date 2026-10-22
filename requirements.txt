@@ -1,11 +1,11 @@
-streamlit==1.32.2
-langchain==0.1.13
-langchain-community==0.0.29
-langchain-openai==0.1.1
+streamlit
+langchain
+langchain-community
+langchain-openai
 langchain-pinecone
-pinecone-client==3.2.2
-sentence-transformers==2.6.1
-pypdf==4.1.0
-python-dotenv==1.0.1
-openai==1.14.2
+pinecone-client
+sentence-transformers
+pypdf
+python-dotenv
+openai
 
