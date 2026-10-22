@@ -14,8 +14,7 @@ from langchain.memory import ConversationBufferMemory
 from langchain_openai import ChatOpenAI
 
 # Impor komponen Pinecone & HuggingFace (E5 Model)
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_pinecone import PineconeVectorStore
+from langchain_pinecone import PineconeVectorStore, PineconeEmbeddings
 from pinecone import Pinecone, ServerlessSpec
 
 # --- Konfigurasi Halaman & Variabel Lingkungan ---
@@ -69,7 +68,7 @@ def get_embeddings_model():
     """
     Menginisialisasi Model Embedding multilingual-e5-large
     """
-    return HuggingFaceEmbeddings(model_name="intfloat/multilingual-e5-large")
+    return PineconeEmbeddings(model="multilingual-e5-large")
 
 def setup_pinecone_and_embed(chunks):
     """
@@ -110,9 +109,9 @@ def get_conversational_chain(vector_store):
     # Menggunakan wrapper ChatOpenAI dengan endpoint DeepSeek
     # Model default yang disarankan adalah deepseek-chat
     llm = ChatOpenAI(
-        api_key=os.getenv("DEEPSEEK_API_KEY"),
-        base_url="https://api.deepseek.com/v1",
-        model="deepseek-chat",
+        api_key=os.getenv("TOKENHARBOR_API_KEY"),
+        base_url="https://tokenharbor.ai/v1,
+        model="deepseek-v4.1-flash:free",
         temperature=0.3
     )
 
