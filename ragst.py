@@ -110,7 +110,7 @@ def get_conversational_chain(vector_store):
     # Model default yang disarankan adalah deepseek-chat
     llm = ChatOpenAI(
         api_key=os.getenv("TOKENHARBOR_API_KEY"),
-        base_url="https://tokenharbor.ai/v1,
+        base_url="https://tokenharbor.ai/v1",
         model="deepseek-v4.1-flash:free",
         temperature=0.3
     )
