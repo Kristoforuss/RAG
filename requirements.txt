@@ -8,4 +8,4 @@ sentence-transformers
 pypdf
 python-dotenv
 openai
-
+langchain-text-splitters
