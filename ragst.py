@@ -2,7 +2,6 @@ import os
 import tempfile
 import time
 import streamlit as st
-from dotenv import load_dotenv
 
 # Impor komponen LangChain
 from langchain_community.document_loaders import PyPDFLoader
@@ -17,9 +16,7 @@ from langchain_openai import ChatOpenAI
 from langchain_pinecone import PineconeVectorStore, PineconeEmbeddings
 from pinecone import Pinecone, ServerlessSpec
 
-# --- Konfigurasi Halaman & Variabel Lingkungan ---
-load_dotenv()
-
+# --- Konfigurasi Halaman ---
 st.set_page_config(
     page_title="PDF RAG Assistant (Pinecone + E5 + DeepSeek)",
     page_icon="🤖",
@@ -75,7 +72,8 @@ def setup_pinecone_and_embed(chunks):
     Menginisialisasi index Pinecone (jika belum ada) dan melakukan upsert.
     """
     embeddings = get_embeddings_model()
-    pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
+    # Mengambil API key Pinecone dari st.secrets
+    pc = Pinecone(api_key=st.secrets["PINECONE_API_KEY"])
 
     if INDEX_NAME not in pc.list_indexes().names():
         st.info(f"Membuat index Pinecone '{INDEX_NAME}'. Ini butuh waktu sekitar 10-30 detik...")
@@ -106,9 +104,9 @@ def get_conversational_chain(vector_store):
     """
     Membangun rantai percakapan (chain) menggunakan DeepSeek LLM.
     """
-    # Menyelaraskan API Key dengan pengecekan di sidebar (TOKENHARBOR_API_KEY)
+    # Mengambil API key TokenHarbor dari st.secrets
     llm = ChatOpenAI(
-        api_key=os.getenv("TOKEHARBOR_API_KEY"),
+        api_key=st.secrets["TOKENHARBOR_API_KEY"],
         base_url="https://tokenharbor.ai/v1",
         model="deepseek-v4.1-flash:free",
         temperature=0.3
@@ -154,8 +152,9 @@ def main():
                 st.warning("Silakan unggah dokumen terlebih dahulu.")
                 return
 
-            if not os.getenv("TOKEHARBOR_API_KEY") or not os.getenv("TOKEHARBOR_API_KEY"):
-                st.error("Pastikan TOKENHARBOR_API_KEY dan PINECONE_API_KEY ada di file .env")
+            # Mengecek keberadaan kunci di st.secrets
+            if "TOKENHARBOR_API_KEY" not in st.secrets or "PINECONE_API_KEY" not in st.secrets:
+                st.error("Pastikan TOKENHARBOR_API_KEY dan PINECONE_API_KEY ada di file .streamlit/secrets.toml")
                 return
 
             with st.spinner("Mengekstrak dan upsert ke Pinecone..."):
@@ -168,8 +167,9 @@ def main():
         st.divider()
         st.markdown("### Atau Gunakan Index Lama")
         if st.button("Muat Database Pinecone"):
-            if not os.getenv("TOKEHARBOR_API_KEY") or not os.getenv("PINECONE_API_KEY"):
-                st.error("Pastikan TOKEHARBOR_API_KEY dan PINECONE_API_KEY ada di file .env")
+            # Mengecek keberadaan kunci di st.secrets
+            if "TOKENHARBOR_API_KEY" not in st.secrets or "PINECONE_API_KEY" not in st.secrets:
+                st.error("Pastikan TOKENHARBOR_API_KEY dan PINECONE_API_KEY ada di file .streamlit/secrets.toml")
                 return
 
             with st.spinner("Menghubungkan..."):
@@ -177,7 +177,7 @@ def main():
                 st.session_state.conversation = get_conversational_chain(vector_store)
                 st.success("Terhubung ke Pinecone! Anda bisa langsung bertanya.")
 
-    # Area Chat Utama - Menggunakan tipe pesan bawaan LangChain
+    # Area Chat Utama
     for message in st.session_state.chat_history:
         role = "user" if message.type == "human" else "assistant"
         with st.chat_message(role):
