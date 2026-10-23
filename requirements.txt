@@ -4,9 +4,8 @@ langchain-community
 langchain-openai
 langchain-pinecone
 langchain-text-splitter
-pinecone-client
+pinecone
 sentence-transformers
 pypdf
 python-dotenv
 openai
-
