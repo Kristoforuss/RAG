@@ -6,8 +6,8 @@ import streamlit as st
 # Impor komponen LangChain
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain.chains import ConversationalRetrievalChain
-from langchain.memory import ConversationBufferMemory
+from langchain_classic.chains import ConversationalRetrievalChain
+from langchain_classic.memory import ConversationBufferMemory
 
 # Impor komponen DeepSeek (menggunakan wrapper OpenAI)
 from langchain_openai import ChatOpenAI
