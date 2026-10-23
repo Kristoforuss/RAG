@@ -154,7 +154,7 @@ def main():
                 st.warning("Silakan unggah dokumen terlebih dahulu.")
                 return
 
-            if not os.getenv("DEEPSEEK_API_KEY") or not os.getenv("PINECONE_API_KEY"):
+            if not os.getenv("TOKEHARBOR_API_KEY") or not os.getenv("TOKEHARBOR_API_KEY"):
                 st.error("Pastikan DEEPSEEK_API_KEY dan PINECONE_API_KEY ada di file .env")
                 return
 
@@ -168,8 +168,8 @@ def main():
         st.divider()
         st.markdown("### Atau Gunakan Index Lama")
         if st.button("Muat Database Pinecone"):
-            if not os.getenv("DEEPSEEK_API_KEY") or not os.getenv("PINECONE_API_KEY"):
-                st.error("Pastikan DEEPSEEK_API_KEY dan PINECONE_API_KEY ada di file .env")
+            if not os.getenv("TOKEHARBOR_API_KEY") or not os.getenv("PINECONE_API_KEY"):
+                st.error("Pastikan TOKEHARBOR_API_KEY dan PINECONE_API_KEY ada di file .env")
                 return
 
             with st.spinner("Menghubungkan..."):
