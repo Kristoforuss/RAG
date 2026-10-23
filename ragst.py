@@ -154,15 +154,43 @@ def main():
 
             # Mengecek keberadaan kunci di st.secrets
             if "TOKENHARBOR_API_KEY" not in st.secrets or "PINECONE_API_KEY" not in st.secrets:
-                st.error("Pastikan TOKENHARBOR_API_KEY dan PINECONE_API_KEY ada di file .streamlit/secrets.toml")
+                st.error("Pastikan TOKENHARBOR_API_KEY dan PINECONE_API_KEY ada di file secrets.toml")
                 return
 
-            with st.spinner("Mengekstrak dan upsert ke Pinecone..."):
+            with st.spinner("Membersihkan database lama dan memproses dokumen baru..."):
+                # 1. HAPUS DATA LAMA DI PINECONE
+                pc = Pinecone(api_key=st.secrets["PINECONE_API_KEY"])
+                if INDEX_NAME in pc.list_indexes().names():
+                    index = pc.Index(INDEX_NAME)
+                    # Mengosongkan seluruh isi index agar bersih untuk dokumen baru
+                    index.delete(delete_all=True) 
+                
+                # 2. PROSES DOKUMEN BARU
                 raw_documents = process_pdf(pdf_docs)
                 text_chunks = get_text_chunks(raw_documents)
                 vector_store = setup_pinecone_and_embed(text_chunks)
+                
+                # 3. RESET INGATAN OBROLAN LAMA
+                st.session_state.chat_history = []
                 st.session_state.conversation = get_conversational_chain(vector_store)
-                st.success("Dokumen berhasil disisipkan! Silakan mulai bertanya.")
+                
+                st.success("Dokumen baru berhasil diproses! Data lama telah dihapus.")
+
+        st.divider()
+        st.markdown("### Atau Gunakan Index Lama")
+        if st.button("Muat Database Pinecone"):
+            if "TOKENHARBOR_API_KEY" not in st.secrets or "PINECONE_API_KEY" not in st.secrets:
+                st.error("Pastikan TOKENHARBOR_API_KEY dan PINECONE_API_KEY ada di file secrets.toml")
+                return
+
+            with st.spinner("Menghubungkan..."):
+                vector_store = get_existing_vector_store()
+                
+                # JIKA MEMUAT DATABASE LAMA, RESET JUGA OBROLAN DI LAYAR
+                st.session_state.chat_history = []
+                st.session_state.conversation = get_conversational_chain(vector_store)
+                
+                st.success("Terhubung ke Pinecone! Anda bisa langsung bertanya.")
 
         st.divider()
         st.markdown("### Atau Gunakan Index Lama")
