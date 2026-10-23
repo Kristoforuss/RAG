@@ -5,7 +5,6 @@ langchain-openai
 langchain-pinecone
 langchain-text-splitter
 pinecone
-sentence-transformers
 pypdf
 python-dotenv
 openai
