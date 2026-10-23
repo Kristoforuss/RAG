@@ -7,4 +7,3 @@ langchain-text-splitter
 pinecone
 pypdf
 python-dotenv
-openai
