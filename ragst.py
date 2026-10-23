@@ -149,7 +149,7 @@ def main():
             type=["pdf"]
         )
 
-        if st.button("Proses & Embed"):
+        if st.button("PROSES DOKUMEN"):
             if not pdf_docs:
                 st.warning("Silakan unggah dokumen terlebih dahulu.")
                 return
@@ -178,8 +178,8 @@ def main():
                 st.success("Dokumen baru berhasil diproses! Data lama telah dihapus.")
 
         st.divider()
-        st.markdown("### Atau Gunakan Index Lama")
-        if st.button("Muat Database Pinecone"):
+        st.markdown("### GUNAKAN DOKUMEN SEBELUMNYA")
+        if st.button("MUAT DOKUMEN SEBELUMNYA"):
             if "TOKENHARBOR_API_KEY" not in st.secrets or "PINECONE_API_KEY" not in st.secrets:
                 st.error("Pastikan TOKENHARBOR_API_KEY dan PINECONE_API_KEY ada di file secrets.toml")
                 return
