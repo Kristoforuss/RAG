@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 # Impor komponen LangChain
 from langchain_community.document_loaders import PyPDFLoader
-from langchain_text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
 
@@ -106,10 +106,9 @@ def get_conversational_chain(vector_store):
     """
     Membangun rantai percakapan (chain) menggunakan DeepSeek LLM.
     """
-    # Menggunakan wrapper ChatOpenAI dengan endpoint DeepSeek
-    # Model default yang disarankan adalah deepseek-chat
+    # Menyelaraskan API Key dengan pengecekan di sidebar (DEEPSEEK_API_KEY)
     llm = ChatOpenAI(
-        api_key=os.getenv("TOKENHARBOR_API_KEY"),
+        api_key=os.getenv("TOKEHARBOR_API_KEY"),
         base_url="https://tokenharbor.ai/v1",
         model="deepseek-v4.1-flash:free",
         temperature=0.3
@@ -156,7 +155,7 @@ def main():
                 return
 
             if not os.getenv("DEEPSEEK_API_KEY") or not os.getenv("PINECONE_API_KEY"):
-                st.error("Pastikan DEEPSEEK_API_KEY dan PINECONE_API_KEY ada di .env")
+                st.error("Pastikan DEEPSEEK_API_KEY dan PINECONE_API_KEY ada di file .env")
                 return
 
             with st.spinner("Mengekstrak dan upsert ke Pinecone..."):
@@ -170,7 +169,7 @@ def main():
         st.markdown("### Atau Gunakan Index Lama")
         if st.button("Muat Database Pinecone"):
             if not os.getenv("DEEPSEEK_API_KEY") or not os.getenv("PINECONE_API_KEY"):
-                st.error("Pastikan DEEPSEEK_API_KEY dan PINECONE_API_KEY ada di .env")
+                st.error("Pastikan DEEPSEEK_API_KEY dan PINECONE_API_KEY ada di file .env")
                 return
 
             with st.spinner("Menghubungkan..."):
@@ -178,14 +177,11 @@ def main():
                 st.session_state.conversation = get_conversational_chain(vector_store)
                 st.success("Terhubung ke Pinecone! Anda bisa langsung bertanya.")
 
-    # Area Chat Utama
-    for i, message in enumerate(st.session_state.chat_history):
-        if i % 2 == 0:
-            with st.chat_message("user"):
-                st.write(message.content)
-        else:
-            with st.chat_message("assistant"):
-                st.write(message.content)
+    # Area Chat Utama - Menggunakan tipe pesan bawaan LangChain
+    for message in st.session_state.chat_history:
+        role = "user" if message.type == "human" else "assistant"
+        with st.chat_message(role):
+            st.write(message.content)
 
     user_question = st.chat_input("Tanyakan sesuatu tentang dokumen Anda...")
 
@@ -198,10 +194,7 @@ def main():
             st.write(user_question)
 
         with st.spinner("DeepSeek sedang menganalisis dokumen Anda..."):
-            # Format query sesuai standar model E5
             e5_formatted_query = f"query: {user_question}"
-
-            # Kita pass pertanyaan yang sudah diformat ke chain
             response = st.session_state.conversation.invoke({"question": e5_formatted_query})
             st.session_state.chat_history = response['chat_history']
 
