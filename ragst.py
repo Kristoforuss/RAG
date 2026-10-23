@@ -106,7 +106,7 @@ def get_conversational_chain(vector_store):
     """
     Membangun rantai percakapan (chain) menggunakan DeepSeek LLM.
     """
-    # Menyelaraskan API Key dengan pengecekan di sidebar (DEEPSEEK_API_KEY)
+    # Menyelaraskan API Key dengan pengecekan di sidebar (TOKENHARBOR_API_KEY)
     llm = ChatOpenAI(
         api_key=os.getenv("TOKEHARBOR_API_KEY"),
         base_url="https://tokenharbor.ai/v1",
@@ -155,7 +155,7 @@ def main():
                 return
 
             if not os.getenv("TOKEHARBOR_API_KEY") or not os.getenv("TOKEHARBOR_API_KEY"):
-                st.error("Pastikan DEEPSEEK_API_KEY dan PINECONE_API_KEY ada di file .env")
+                st.error("Pastikan TOKENHARBOR_API_KEY dan PINECONE_API_KEY ada di file .env")
                 return
 
             with st.spinner("Mengekstrak dan upsert ke Pinecone..."):
